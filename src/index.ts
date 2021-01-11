@@ -15,6 +15,7 @@ declare module "twitter-api-client" {
     getTweetByUrl(url: string): Promise<Twitter.StatusesShowById>;
     getUserById(user_id: string): Promise<Twitter.UsersShow>;
     getUserByScreenName(screen_name: string): Promise<Twitter.UsersShow>;
+    getVideoUrl(status: Twitter.StatusesShowById): string;
   }
 }
 Twitter.TwitterClient.prototype.getClient = () => {
@@ -38,6 +39,25 @@ Twitter.TwitterClient.prototype.getUserById = async (user_id: string) => {
 }
 Twitter.TwitterClient.prototype.getUserByScreenName = async (screen_name: string) => {
   return await client.accountsAndUsers.usersShow({ screen_name: screen_name });
+}
+/**
+ * ツイートにある動画の、一番ビットレートが高いmp4のURLを返します。
+ * 複数動画があれば
+ */
+Twitter.TwitterClient.prototype.getVideoUrl = (status: Twitter.StatusesShowById) => {
+  if (!status.extended_entities) return "";
+  let videoUrl: string = "";
+  let medias = status.extended_entities.media;
+  for (let i = 0; i < medias.length; i++) {
+    const media = medias[i];
+    if (media.type == "video" && media.video_info) {
+      let variants = media.video_info.variants.filter(v => v.content_type == "video/mp4");
+      variants.sort((a, b) => { return b.bitrate! - a.bitrate! });
+      videoUrl = (variants[0].url);
+      break;
+    }
+  }
+  return videoUrl;
 }
 
 export default Twitter;
