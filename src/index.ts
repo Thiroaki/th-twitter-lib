@@ -26,17 +26,12 @@ Twitter.TwitterClient.prototype.getClient = () => {
   });
   return client;
 }
-Twitter.TwitterClient.prototype.getTweetById = (id: string) => {
-  return new Promise((resolve, reject) => {
-    client.tweets.statusesShowById({ id: id, include_entities: true, tweet_mode: "extended" })
-      .then(res => { resolve(res) })
-      .catch(err => { reject("err") });
-  });
-
+Twitter.TwitterClient.prototype.getTweetById = async (id: string) => {
+  return await client.tweets.statusesShowById({ id: id, include_entities: true, tweet_mode: "extended" });
 }
 Twitter.TwitterClient.prototype.getTweetByUrl = async (url: string) => {
   let id = new URL(url).pathname.match(/\d+$/)?.[0] as string;
-  return client.getTweetById(id);
+  return await client.getTweetById(id);
 }
 Twitter.TwitterClient.prototype.getUserById = async (user_id: string) => {
   return await client.accountsAndUsers.usersShow({ user_id: user_id });
