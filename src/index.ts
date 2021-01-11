@@ -5,6 +5,8 @@
 
 import * as Twitter from "twitter-api-client";
 
+let client: Twitter.TwitterClient;
+
 declare module "twitter-api-client" {
   interface TwitterClient {
     // メソッドを追加する時は、ここに型を定義して下で実装
@@ -16,25 +18,31 @@ declare module "twitter-api-client" {
   }
 }
 Twitter.TwitterClient.prototype.getClient = () => {
-  return new Twitter.TwitterClient({
+  client = new Twitter.TwitterClient({
     apiKey: process.env.TWITTER_API_KEY as string,
     apiSecret: process.env.TWITTER_API_SECRET as string,
     accessToken: process.env.TWITTER_ACCESS_TOKEN,
     accessTokenSecret: process.env.TWITTER_ACCESS_TOKEN_SECRET
   });
+  return client;
 }
-Twitter.TwitterClient.prototype.getTweetById = async (id: string) => {
-  return await Twitter.TwitterClient.prototype.tweets.statusesShowById({ id: id, include_entities: true, tweet_mode: "extended" });
+Twitter.TwitterClient.prototype.getTweetById = (id: string) => {
+  return new Promise((resolve, reject) => {
+    client.tweets.statusesShowById({ id: id, include_entities: true, tweet_mode: "extended" })
+      .then(res => { resolve(res) })
+      .catch(err => { reject("err") });
+  });
+
 }
 Twitter.TwitterClient.prototype.getTweetByUrl = async (url: string) => {
   let id = new URL(url).pathname.match(/\d+$/)?.[0] as string;
-  return Twitter.TwitterClient.prototype.getTweetById(id);
+  return client.getTweetById(id);
 }
 Twitter.TwitterClient.prototype.getUserById = async (user_id: string) => {
-  return await Twitter.TwitterClient.prototype.accountsAndUsers.usersShow({ user_id: user_id });
+  return await client.accountsAndUsers.usersShow({ user_id: user_id });
 }
 Twitter.TwitterClient.prototype.getUserByScreenName = async (screen_name: string) => {
-  return await Twitter.TwitterClient.prototype.accountsAndUsers.usersShow({ screen_name: screen_name });
+  return await client.accountsAndUsers.usersShow({ screen_name: screen_name });
 }
 
 export default Twitter;
