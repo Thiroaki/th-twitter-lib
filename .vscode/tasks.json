@@ -1,0 +1,34 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+    {
+      "type": "npm",
+      "script": "build",
+      "group": "build",
+      "problemMatcher": [],
+      "label": "build",
+      "detail": "npx tsc"
+    },
+    {
+      "type": "npm",
+      "script": "debug",
+      "problemMatcher": [],
+      "label": "debug",
+      "detail": "ts-node src/index.ts"
+    },
+    {
+      "type": "npm",
+      "script": "clean",
+      "problemMatcher": [],
+      "label": "clean",
+      "detail": "rimraf dist/*"
+    },
+    {
+      "type": "npm",
+      "script": "start",
+      "problemMatcher": [],
+      "label": "start",
+      "detail": "node dist/index.js"
+    }
+  ]
+}
