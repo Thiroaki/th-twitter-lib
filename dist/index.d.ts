@@ -9,5 +9,8 @@ declare module "twitter-api-client" {
         getVideoUrl(status: Twitter.StatusesShowById): string;
         getMediaUrls(status: Twitter.StatusesShowById): string[];
     }
+    interface StatusesDestroyById {
+        full_text: string;
+    }
 }
 export default Twitter;
