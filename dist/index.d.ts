@@ -9,7 +9,7 @@ declare module "twitter-api-client" {
         getVideoUrl(status: Twitter.StatusesShowById): string;
         getMediaUrls(status: Twitter.StatusesShowById): string[];
     }
-    interface StatusesDestroyById {
+    interface StatusesShowById {
         full_text: string;
     }
 }

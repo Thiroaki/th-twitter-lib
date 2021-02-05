@@ -19,7 +19,7 @@ declare module "twitter-api-client" {
     getMediaUrls(status: Twitter.StatusesShowById): string[];
   }
 
-  interface StatusesDestroyById{
+  interface StatusesShowById{
     full_text: string;
   }
 }
