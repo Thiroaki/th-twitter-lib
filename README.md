@@ -6,4 +6,6 @@ Some frequently userd methods and fix of `full_text` issue has included.
 ```ts
 //import Twitter from "twitter-api-client";
 import Twitter from "th-twitter-lib";
+
+const client = new Twitter.TwitterClient(your_api_key);
 ```
