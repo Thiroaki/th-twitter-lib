@@ -10,7 +10,6 @@ let client: Twitter.TwitterClient;
 declare module "twitter-api-client" {
   interface TwitterClient {
     // メソッドを追加する時は、ここに型を定義して下で実装
-    getClient(): Twitter.TwitterClient;
     getTweetById(id: string): Promise<Twitter.StatusesShowById>;
     getTweetByUrl(url: string): Promise<Twitter.StatusesShowById>;
     getUserById(user_id: string): Promise<Twitter.UsersShow>;
@@ -19,18 +18,9 @@ declare module "twitter-api-client" {
     getMediaUrls(status: Twitter.StatusesShowById): string[];
   }
 
-  interface StatusesShowById{
+  interface StatusesShowById {
     full_text: string;
   }
-}
-Twitter.TwitterClient.prototype.getClient = () => {
-  client = new Twitter.TwitterClient({
-    apiKey: process.env.TWITTER_API_KEY as string,
-    apiSecret: process.env.TWITTER_API_SECRET as string,
-    accessToken: process.env.TWITTER_ACCESS_TOKEN,
-    accessTokenSecret: process.env.TWITTER_ACCESS_TOKEN_SECRET
-  });
-  return client;
 }
 Twitter.TwitterClient.prototype.getTweetById = async (id: string) => {
   return await client.tweets.statusesShowById({ id: id, include_entities: true, tweet_mode: "extended" });
@@ -76,7 +66,7 @@ Twitter.TwitterClient.prototype.getMediaUrls = (status: Twitter.StatusesShowById
   for (const media of medias) {
     if (media.type == "photo") {
       urls.push(media.media_url_https);
-    }else{
+    } else {
       urls.push(client.getVideoUrl(status))
     }
   }

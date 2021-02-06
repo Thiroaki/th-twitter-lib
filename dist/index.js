@@ -25,15 +25,6 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const Twitter = __importStar(require("twitter-api-client"));
 let client;
-Twitter.TwitterClient.prototype.getClient = () => {
-    client = new Twitter.TwitterClient({
-        apiKey: process.env.TWITTER_API_KEY,
-        apiSecret: process.env.TWITTER_API_SECRET,
-        accessToken: process.env.TWITTER_ACCESS_TOKEN,
-        accessTokenSecret: process.env.TWITTER_ACCESS_TOKEN_SECRET
-    });
-    return client;
-};
 Twitter.TwitterClient.prototype.getTweetById = async (id) => {
     return await client.tweets.statusesShowById({ id: id, include_entities: true, tweet_mode: "extended" });
 };

@@ -15,7 +15,7 @@
     "start": "node dist/index.js"
   },
   "keywords": [],
-  "author": "",
+  "author": "thiro",
   "license": "MIT",
   "dependencies": {
     "twitter-api-client": "^1.2.4"
