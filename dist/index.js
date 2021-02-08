@@ -97,12 +97,15 @@ Twitter.TwitterClient.prototype.getFriendsIds = async function (params) {
 /**
  * 指定したIDより未来のユーザーツイートを返します．
  */
-Twitter.TwitterClient.prototype.getUserTweetsUntilSpecificId = async function (params, id) {
-    params.count = 200;
-    params.since_id = id;
-    params.trim_user = false;
-    params.exclude_replies = false;
-    params.include_rts = true;
+Twitter.TwitterClient.prototype.getUserTweetsUntilId = async function (id) {
+    let params = {
+        count: 200,
+        since_id: id,
+        trim_user: false,
+        exclude_replies: false,
+        include_rts: true,
+        tweet_mode: "extended"
+    };
     let res = [];
     while (1) {
         let chunk = await this.tweets.statusesUserTimeline(params);

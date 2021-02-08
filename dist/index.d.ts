@@ -9,7 +9,7 @@ declare module "twitter-api-client" {
         getVideoUrl(status: Twitter.StatusesShowById): string;
         getMediaUrls(status: Twitter.StatusesShowById): string[];
         getFriendsIds(params: Twitter.FriendsIdsParams): Promise<string[]>;
-        getUserTweetsUntilSpecificId(params: Twitter.StatusesUserTimelineParams, id: string | number): Promise<Twitter.StatusesShowById[]>;
+        getUserTweetsUntilId(id: string | number): Promise<Twitter.StatusesShowById[]>;
         hasMedia(tweet: Twitter.StatusesShowById): boolean;
     }
     interface StatusesShowById {

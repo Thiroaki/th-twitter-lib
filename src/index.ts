@@ -107,7 +107,8 @@ Twitter.TwitterClient.prototype.getUserTweetsUntilId = async function (id: strin
     since_id: id,
     trim_user: false,
     exclude_replies: false,
-    include_rts: true
+    include_rts: true,
+    tweet_mode: "extended"
   };
 
   let res: Twitter.StatusesUserTimeline[] = [];
