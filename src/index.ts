@@ -16,7 +16,7 @@ declare module "twitter-api-client" {
     getVideoUrl(status: Twitter.StatusesShowById): string;
     getMediaUrls(status: Twitter.StatusesShowById): string[];
     getFriendsIds(params: Twitter.FriendsIdsParams): Promise<string[]>;
-    getUserTweetsUntilSpecificId(id: string | number): Promise<Twitter.StatusesShowById[]>;
+    getUserTweetsUntilId(id: string | number): Promise<Twitter.StatusesShowById[]>;
     hasMedia(tweet: Twitter.StatusesShowById): boolean;
   }
 
@@ -101,7 +101,7 @@ Twitter.TwitterClient.prototype.getFriendsIds = async function (params: Twitter.
 /**
  * 指定したIDより未来のユーザーツイートを返します．
  */
-Twitter.TwitterClient.prototype.getUserTweetsUntilSpecificId = async function (id: string | number) {
+Twitter.TwitterClient.prototype.getUserTweetsUntilId = async function (id: string | number) {
   let params: Twitter.StatusesUserTimelineParams = {
     count: 200,
     since_id: id,
@@ -109,7 +109,7 @@ Twitter.TwitterClient.prototype.getUserTweetsUntilSpecificId = async function (i
     exclude_replies: false,
     include_rts: true
   };
-  
+
   let res: Twitter.StatusesUserTimeline[] = [];
   while (1) {
     let chunk = await this.tweets.statusesUserTimeline(params);
