@@ -25,7 +25,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const Twitter = __importStar(require("twitter-api-client"));
 Twitter.TwitterClient.prototype.getTweetById = async function (id) {
-    return await this.tweets.statusesShowById({ id: id, include_entities: true, tweet_mode: "extended" });
+    return await this.tweets.statusesShowById({ id: id, include_entities: true, tweet_mode: "extended", trim_user: false });
 };
 Twitter.TwitterClient.prototype.getTweetByUrl = async function (url) {
     return await this.getTweetById(new URL(url).pathname.match(/\d+$/)[0]);
@@ -35,6 +35,9 @@ Twitter.TwitterClient.prototype.getUserById = async function (user_id) {
 };
 Twitter.TwitterClient.prototype.getUserByScreenName = async function (screen_name) {
     return await this.accountsAndUsers.usersShow({ screen_name: screen_name });
+};
+Twitter.TwitterClient.prototype.getUser = async function (user) {
+    return await this.accountsAndUsers.usersShow(user);
 };
 /**
  * ツイートにある動画の、一番ビットレートが高いmp4のURLを返します。
@@ -74,6 +77,54 @@ Twitter.TwitterClient.prototype.getMediaUrls = function (status) {
         }
     }
     return urls;
+};
+/**
+ * フォローしているユーザーのIDを，string配列で返します．
+ */
+Twitter.TwitterClient.prototype.getFriendsIds = async function (params) {
+    params.count = 5000;
+    let res = [];
+    while (true) {
+        let chunk = await this.accountsAndUsers.friendsIds(params);
+        if (chunk.next_cursor == 0)
+            break;
+        res = res.concat(chunk.ids);
+        params.cursor = chunk.next_cursor;
+    }
+    let res_str = res.map(val => val.toString());
+    return res_str;
+};
+/**
+ * 指定したIDより未来のユーザーツイートを返します．
+ */
+Twitter.TwitterClient.prototype.getUserTweetsUntilSpecificId = async function (params, id) {
+    params.count = 200;
+    params.since_id = id;
+    params.trim_user = false;
+    params.exclude_replies = false;
+    params.include_rts = true;
+    let res = [];
+    while (1) {
+        let chunk = await this.tweets.statusesUserTimeline(params);
+        if (chunk.length == 0)
+            break;
+        res = res.concat(chunk);
+        // chunk の最後の要素の id をセット
+        params.max_id = chunk[chunk.length - 1].id;
+    }
+    return res;
+};
+/**
+ * メディアツイートかどうかを返します．
+ */
+Twitter.TwitterClient.prototype.hasMedia = function (tweet) {
+    // extended_entities is nullable
+    if (tweet.extended_entities && tweet.extended_entities.media) {
+        return true;
+    }
+    else {
+        return false;
+    }
 };
 exports.default = Twitter;
 //# sourceMappingURL=index.js.map
