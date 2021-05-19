@@ -25,7 +25,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const Twitter = __importStar(require("twitter-api-client"));
 Twitter.TwitterClient.prototype.getTweetById = async function (id) {
-    return await this.tweets.statusesShowById({ id: id, include_entities: true, tweet_mode: "extended", trim_user: false });
+    return await this.tweets.statusesShow({ id: id, include_entities: true, tweet_mode: "extended", trim_user: false });
 };
 Twitter.TwitterClient.prototype.getTweetByUrl = async function (url) {
     return await this.getTweetById(new URL(url).pathname.match(/\d+$/)[0]);
@@ -95,12 +95,12 @@ Twitter.TwitterClient.prototype.getFriendsIds = async function (params) {
     return res_str;
 };
 /**
- * 指定したIDより未来のユーザーツイートを返します．
+ * 指定したIDより未来のユーザーツイート(自分のツイート)を返します．
  */
-Twitter.TwitterClient.prototype.getUserTweetsUntilId = async function (id) {
+Twitter.TwitterClient.prototype.getUserTweetsUntilId = async function (tweet_id) {
     let params = {
         count: 200,
-        since_id: id,
+        since_id: tweet_id,
         trim_user: false,
         exclude_replies: false,
         include_rts: true,

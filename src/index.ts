@@ -8,26 +8,23 @@ import * as Twitter from "twitter-api-client";
 declare module "twitter-api-client" {
   interface TwitterClient {
     // メソッドを追加する時は、ここに型を定義して下で実装
-    getTweetById(id: string | number): Promise<Twitter.StatusesShowById>;
-    getTweetByUrl(url: string): Promise<Twitter.StatusesShowById>;
+    getTweetById(id: string | number): Promise<Twitter.StatusesShow>;
+    getTweetByUrl(url: string): Promise<Twitter.StatusesShow>;
     getUserById(user_id: string | number): Promise<Twitter.UsersShow>;
     getUserByScreenName(screen_name: string): Promise<Twitter.UsersShow>;
     getUser(params: Twitter.UsersShowParams): Promise<Twitter.UsersShow>;
-    getVideoUrl(status: Twitter.StatusesShowById): string;
-    getMediaUrls(status: Twitter.StatusesShowById): string[];
+    getVideoUrl(status: Twitter.StatusesShow): string;
+    getMediaUrls(status: Twitter.StatusesShow): string[];
     getFriendsIds(params: Twitter.FriendsIdsParams): Promise<string[]>;
-    getUserTweetsUntilId(id: string | number): Promise<Twitter.StatusesShowById[]>;
-    hasMedia(tweet: Twitter.StatusesShowById): boolean;
+    getUserTweetsUntilId(id: string | number): Promise<Twitter.StatusesShow[]>;
+    hasMedia(tweet: Twitter.StatusesShow): boolean;
   }
 
-  interface StatusesShowById {
-    full_text: string;
-  }
 }
 
 
 Twitter.TwitterClient.prototype.getTweetById = async function (id: string | number) {
-  return await this.tweets.statusesShowById({ id: id, include_entities: true, tweet_mode: "extended", trim_user: false });
+  return await this.tweets.statusesShow({ id: id, include_entities: true, tweet_mode: "extended", trim_user: false });
 }
 Twitter.TwitterClient.prototype.getTweetByUrl = async function (url: string) {
   return await this.getTweetById(new URL(url).pathname.match(/\d+$/)![0] as string);
@@ -46,7 +43,7 @@ Twitter.TwitterClient.prototype.getUser = async function (user: Twitter.UsersSho
  * ツイートにある動画の、一番ビットレートが高いmp4のURLを返します。
  * 動画が無かったら、空のstringを返します。
  */
-Twitter.TwitterClient.prototype.getVideoUrl = function (status: Twitter.StatusesShowById) {
+Twitter.TwitterClient.prototype.getVideoUrl = function (status: Twitter.StatusesShow) {
   let videoUrl: string = "";
   if (!status.extended_entities) return videoUrl;
   let medias = status.extended_entities.media;
@@ -66,7 +63,7 @@ Twitter.TwitterClient.prototype.getVideoUrl = function (status: Twitter.Statuses
  * ツイートのメディア(画像や動画)のURLを返します。
  * メディアが無かったら配列は空です。
  */
-Twitter.TwitterClient.prototype.getMediaUrls = function (status: Twitter.StatusesShowById) {
+Twitter.TwitterClient.prototype.getMediaUrls = function (status: Twitter.StatusesShow) {
   let urls: string[] = [];
   if (!status.extended_entities) return urls;
   let medias = status.extended_entities.media;
@@ -99,12 +96,12 @@ Twitter.TwitterClient.prototype.getFriendsIds = async function (params: Twitter.
 }
 
 /**
- * 指定したIDより未来のユーザーツイートを返します．
+ * 指定したIDより未来のユーザーツイート(自分のツイート)を返します．
  */
-Twitter.TwitterClient.prototype.getUserTweetsUntilId = async function (id: string | number) {
+Twitter.TwitterClient.prototype.getUserTweetsUntilId = async function (tweet_id: string | number) {
   let params: Twitter.StatusesUserTimelineParams = {
     count: 200,
-    since_id: id,
+    since_id: tweet_id,
     trim_user: false,
     exclude_replies: false,
     include_rts: true,
@@ -120,13 +117,13 @@ Twitter.TwitterClient.prototype.getUserTweetsUntilId = async function (id: strin
     params.max_id = chunk[chunk.length - 1].id;
   }
 
-  return res as Twitter.StatusesShowById[];
+  return res as Twitter.StatusesShow[];
 }
 
 /**
  * メディアツイートかどうかを返します．
  */
-Twitter.TwitterClient.prototype.hasMedia = function (tweet: Twitter.StatusesShowById) {
+Twitter.TwitterClient.prototype.hasMedia = function (tweet: Twitter.StatusesShow) {
   // extended_entities is nullable
   if (tweet.extended_entities && tweet.extended_entities.media) {
     return true;
